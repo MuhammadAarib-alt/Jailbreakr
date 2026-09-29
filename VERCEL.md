@@ -46,15 +46,23 @@ No UI, routing, or Convex workflow changed.
    | Variable           | Required | Value |
    |--------------------|----------|-------|
    | `VITE_CONVEX_URL`  | yes      | Your Convex deployment URL, e.g. `https://your-deployment.convex.cloud` |
-   | `CONVEX_SITE_URL`  | for auth | Your production URL, e.g. `https://your-app.vercel.app` |
 
    `VITE_…` variables are baked into the bundle at **build time** — if you
    change `VITE_CONVEX_URL`, trigger a new deployment.
 
-3. **Tell Convex about the production URL** (needed for sign-in to work in
-   production). In the Convex dashboard (Settings → Environment Variables)
-   set `CONVEX_SITE_URL` to the same `https://your-app.vercel.app` value.
-   It must match exactly in both places.
+3. **Tell Convex about itself** (needed for sign-in to work in production).
+   In the Convex dashboard (Settings → Environment Variables) set:
+
+   - `CONVEX_SITE_URL` = your **Convex deployment URL** (e.g.
+     `https://your-deployment.convex.cloud`) — this is the JWT issuer the
+     deployment validates its own sign-in tokens against, and OIDC
+     discovery is served on the deployment itself, so it must be the
+     convex.cloud URL, *not* the Vercel URL.
+   - `VLY_CONVEX_AUTH_ISSUER` = `https://freebuff.com` (enables the
+     federated Freebuff-token provider in `auth.config.ts`).
+
+   (`CONVEX_SITE_URL` is not read by the frontend bundle — no Vercel-side
+   copy needed.)
 
 4. **Deploy.** `npm run build` should now succeed.
 
