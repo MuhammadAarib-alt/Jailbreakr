@@ -200,20 +200,20 @@ function ScoreCard({
         </div>
       </div>
 
-      <div className="relative flex items-center gap-3 sm:gap-4">
+      <div className="relative flex items-center gap-3.5 sm:gap-4">
         <ScoreGauge score={value} id={scan.id} />
-        <div className="min-w-0">
+        <div className="min-w-0 flex-1">
           <p className="font-display text-2xl font-extrabold leading-none text-slate-100 tabular-nums sm:text-3xl">
             {value}
             <span className="ml-0.5 text-sm font-bold text-slate-600">/100</span>
           </p>
-          <p className="text-pretty mt-1.5 text-[11px] leading-snug text-slate-400 sm:text-xs">
+          <p className="text-pretty mt-1.5 text-xs leading-snug text-slate-400 sm:text-[11px]">
             {scan.caption}
           </p>
         </div>
       </div>
 
-      <ul className="relative flex flex-col gap-1.5 border-t border-white/5 pt-3">
+      <ul className="relative flex flex-wrap gap-x-4 gap-y-1.5 border-t border-white/5 pt-3">
         {scan.chips.map((chip) => (
           <li
             key={chip}
@@ -244,7 +244,7 @@ function TerminalPanel({ scan, runKey }: { scan: Scan; runKey: number }) {
         </span>
       </div>
 
-      <div className="flex-1 space-y-2 p-4 font-mono text-[11.5px] leading-relaxed sm:p-5 sm:text-[13px]">
+      <div className="flex-1 space-y-2 p-3.5 font-mono text-[11.5px] leading-relaxed sm:p-5 sm:text-[13px]">
         <AnimatePresence mode="wait">
           <motion.div
             key={`${scan.id}-${runKey}`}
@@ -372,7 +372,7 @@ export function ScorePreview() {
           <div className="grid gap-3 lg:grid-cols-[1.05fr_0.95fr] lg:gap-4">
             <TerminalPanel scan={scan} runKey={runKey} />
 
-            <div className="grid grid-cols-2 gap-3 sm:gap-4">
+            <div className="grid grid-cols-1 gap-3 min-[480px]:grid-cols-2 min-[480px]:gap-4">
               {(Object.keys(SCANS) as ScanId[]).map((id) => (
                 <ScoreCard
                   key={id}
