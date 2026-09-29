@@ -121,7 +121,7 @@ const STEPS: {
   {
     number: "01",
     title: "Install the CLI",
-    body: "One command — no config files, no account, no dependencies added to your repo.",
+    body: "Zero complex setup — just drop in your CLI key and scan. No dependencies added to your repo.",
     code: "npx jailbreakr scan",
   },
   {
