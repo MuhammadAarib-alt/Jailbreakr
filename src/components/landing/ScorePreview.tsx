@@ -7,7 +7,7 @@ import { EASE } from "./motion";
 
 type ScanId = "security" | "legal";
 
-type TerminalLine = { text: string; kind: "cmd" | "ok" | "out" };
+type TerminalLine = { text: string; kind: "cmd" | "ok" | "warn" | "out" };
 
 type Scan = {
   id: ScanId;
@@ -36,9 +36,9 @@ const SCANS: Record<ScanId, Scan> = {
     lines: [
       { text: "npx jailbreakr scan", kind: "cmd" },
       { text: "Indexed 148 files · 24 AI surface routes", kind: "out" },
-      { text: "Fuzzing 12 system prompts (1,240 payloads)", kind: "out" },
-      { text: "Swept secrets, auth guards, rate limits", kind: "out" },
-      { text: "0 critical · 3 medium · 9 low", kind: "out" },
+      { text: "[Prompt Injection] 2 vectors in /api/chat — input guard patched", kind: "warn" },
+      { text: "[API Keys] 1 exposed key in committed .env — rotated", kind: "warn" },
+      { text: "[Jailbreaks] 3/120 payloads bypassed safety filters", kind: "warn" },
       { text: "Vulnerability score: 94/100 — LOW RISK", kind: "ok" },
       { text: "report → ./jailbreakr/report.html", kind: "out" },
     ],
@@ -56,9 +56,9 @@ const SCANS: Record<ScanId, Scan> = {
     lines: [
       { text: "npx jailbreakr scan --legal", kind: "cmd" },
       { text: "Auditing 24 AI surfaces for disclosure gaps", kind: "out" },
-      { text: "Checking training-data & copyright exposure", kind: "out" },
-      { text: "Tracing PII flows across 6 integrations", kind: "out" },
-      { text: "0 blockers · 2 advisories", kind: "out" },
+      { text: "[Copyright] 2 training sources near licensed-content threshold", kind: "warn" },
+      { text: "[PII Leakage] 4 stored completions echo customer emails", kind: "warn" },
+      { text: "[AI Disclaimers] missing on /pricing and /terms pages", kind: "warn" },
       { text: "Legal risk score: 88/100 — COMPLIANT", kind: "ok" },
       { text: "brief → ./jailbreakr/legal-brief.pdf", kind: "out" },
     ],
@@ -268,6 +268,7 @@ function TerminalPanel({ scan, runKey }: { scan: Scan; runKey: number }) {
                   "flex gap-2",
                   line.kind === "cmd" && "text-slate-100",
                   line.kind === "ok" && "text-emerald-400",
+                  line.kind === "warn" && "text-amber-400",
                   line.kind === "out" && "text-slate-400",
                 )}
               >
