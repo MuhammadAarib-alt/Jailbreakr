@@ -1,5 +1,5 @@
 import { AnimatePresence, animate, motion, useInView } from "framer-motion";
-import { Check, RefreshCw, ShieldCheck, Scale } from "lucide-react";
+import { Check, RefreshCw, Scale, ShieldCheck } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 import { cn } from "@/lib/utils";
@@ -7,7 +7,7 @@ import { EASE } from "./motion";
 
 type ScanId = "security" | "legal";
 
-type TerminalLine = { text: string; kind: "cmd" | "ok" | "warn" | "out" };
+type TerminalLine = { text: string; kind: "cmd" | "ok" | "out" };
 
 type Scan = {
   id: ScanId;
@@ -34,13 +34,13 @@ const SCANS: Record<ScanId, Scan> = {
     chips: ["Prompt Injections", "API Keys", "Jailbreaks"],
     icon: ShieldCheck,
     lines: [
-      { text: "npx ai-guard-cli scan", kind: "cmd" },
-      { text: "Indexed 148 files · 24 AI surface routes", kind: "ok" },
-      { text: "Fuzzing 12 system prompts (1,240 payloads)", kind: "ok" },
-      { text: "Swept secrets, auth guards, rate limits", kind: "ok" },
+      { text: "npx jailbreakr scan", kind: "cmd" },
+      { text: "Indexed 148 files · 24 AI surface routes", kind: "out" },
+      { text: "Fuzzing 12 system prompts (1,240 payloads)", kind: "out" },
+      { text: "Swept secrets, auth guards, rate limits", kind: "out" },
       { text: "0 critical · 3 medium · 9 low", kind: "out" },
       { text: "Vulnerability score: 94/100 — LOW RISK", kind: "ok" },
-      { text: "report → ./ai-guard/report.html", kind: "out" },
+      { text: "report → ./jailbreakr/report.html", kind: "out" },
     ],
   },
   legal: {
@@ -54,13 +54,13 @@ const SCANS: Record<ScanId, Scan> = {
     chips: ["Copyright", "PII Leakage", "AI Disclaimers"],
     icon: Scale,
     lines: [
-      { text: "npx ai-guard-cli scan --legal", kind: "cmd" },
-      { text: "Auditing 24 AI surfaces for disclosure gaps", kind: "ok" },
-      { text: "Checking training-data & copyright exposure", kind: "ok" },
-      { text: "Tracing PII flows across 6 integrations", kind: "ok" },
+      { text: "npx jailbreakr scan --legal", kind: "cmd" },
+      { text: "Auditing 24 AI surfaces for disclosure gaps", kind: "out" },
+      { text: "Checking training-data & copyright exposure", kind: "out" },
+      { text: "Tracing PII flows across 6 integrations", kind: "out" },
       { text: "0 blockers · 2 advisories", kind: "out" },
       { text: "Legal risk score: 88/100 — COMPLIANT", kind: "ok" },
-      { text: "brief → ./ai-guard/legal-brief.pdf", kind: "out" },
+      { text: "brief → ./jailbreakr/legal-brief.pdf", kind: "out" },
     ],
   },
 };
@@ -84,11 +84,9 @@ function useCountUp(target: number, active: boolean, duration = 1.1) {
 
 function ScoreGauge({
   score,
-  active,
   id,
 }: {
   score: number;
-  active: boolean;
   id: ScanId;
 }) {
   const gradientId = `gauge-${id}`;
@@ -100,8 +98,8 @@ function ScoreGauge({
       <svg viewBox="0 0 96 96" className="size-full -rotate-90">
         <defs>
           <linearGradient id={gradientId} x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stopColor="#22c55e" />
-            <stop offset="100%" stopColor="#0d9488" />
+            <stop offset="0%" stopColor="#34d399" />
+            <stop offset="100%" stopColor="#14b8a6" />
           </linearGradient>
         </defs>
         <circle
@@ -109,7 +107,7 @@ function ScoreGauge({
           cy="48"
           r={radius}
           fill="none"
-          stroke="#f1f5f9"
+          stroke="#141b2d"
           strokeWidth="9"
         />
         <motion.circle
@@ -123,16 +121,16 @@ function ScoreGauge({
           strokeDasharray={circumference}
           initial={{ strokeDashoffset: circumference }}
           animate={{
-            strokeDashoffset: circumference * (1 - (active ? score : score) / 100),
+            strokeDashoffset: circumference * (1 - score / 100),
           }}
           transition={{ duration: 1.15, ease: EASE }}
         />
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <span className="font-display text-xl font-extrabold leading-none text-slate-900 tabular-nums sm:text-2xl">
+        <span className="font-display text-xl font-extrabold leading-none text-slate-100 tabular-nums sm:text-2xl">
           {score}
         </span>
-        <span className="mt-0.5 text-[9px] font-semibold uppercase tracking-[0.14em] text-slate-400 sm:text-[10px]">
+        <span className="mt-0.5 text-[9px] font-semibold uppercase tracking-[0.14em] text-slate-500 sm:text-[10px]">
           /100
         </span>
       </div>
@@ -150,7 +148,7 @@ function ScoreCard({
   onSelect: () => void;
 }) {
   const Icon = scan.icon;
-  const value = useCountUp(scan.score, active);
+  const value = useCountUp(scan.score, true);
 
   return (
     <motion.button
@@ -164,11 +162,11 @@ function ScoreCard({
       whileTap={{ scale: 0.99 }}
       aria-pressed={active}
       className={cn(
-        "group relative flex flex-col gap-4 rounded-2xl border bg-white p-4 text-left outline-none transition-all duration-300 sm:p-5",
-        "focus-visible:ring-[3px] focus-visible:ring-blue-500/25",
+        "group relative flex flex-col gap-4 rounded-2xl border bg-card p-4 text-left outline-none transition-all duration-300 sm:p-5",
+        "focus-visible:ring-[3px] focus-visible:ring-indigo-500/25",
         active
-          ? "border-slate-200 shadow-lift ring-1 ring-slate-900/[0.04]"
-          : "border-slate-200/80 opacity-80 shadow-soft hover:opacity-100",
+          ? "border-white/15 shadow-lift"
+          : "border-white/5 opacity-80 shadow-soft hover:opacity-100",
       )}
     >
       <AnimatePresence>
@@ -176,24 +174,24 @@ function ScoreCard({
           <motion.span
             layoutId="score-card-glow"
             aria-hidden
-            className="pointer-events-none absolute inset-0 rounded-2xl bg-[radial-gradient(120%_80%_at_50%_0%,rgba(16,185,129,0.10),transparent_60%)]"
+            className="pointer-events-none absolute inset-0 rounded-2xl bg-[radial-gradient(120%_80%_at_50%_0%,rgba(16,185,129,0.12),transparent_60%)]"
             transition={{ type: "spring", stiffness: 260, damping: 30 }}
           />
         ) : null}
       </AnimatePresence>
 
       <div className="relative flex items-start justify-between gap-2">
-        <div className="flex min-w-0 flex-col gap-1">
-          <span className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-400">
-            <Icon className="size-3.5 text-slate-400" />
+        <div className="flex min-w-0 flex-col gap-1.5">
+          <span className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500">
+            <Icon className="size-3.5 text-slate-500" />
             {scan.title}
           </span>
           <span
             className={cn(
               "inline-flex w-fit items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-semibold",
               scan.statusTone === "emerald"
-                ? "bg-emerald-50 text-emerald-700 ring-1 ring-emerald-600/15"
-                : "bg-amber-50 text-amber-700 ring-1 ring-amber-600/15",
+                ? "bg-emerald-500/10 text-emerald-400 ring-1 ring-emerald-500/25"
+                : "bg-amber-500/10 text-amber-400 ring-1 ring-amber-500/25",
             )}
           >
             <Check className="size-3" strokeWidth={3} />
@@ -203,25 +201,25 @@ function ScoreCard({
       </div>
 
       <div className="relative flex items-center gap-3 sm:gap-4">
-        <ScoreGauge score={value} active={active} id={scan.id} />
+        <ScoreGauge score={value} id={scan.id} />
         <div className="min-w-0">
-          <p className="font-display text-2xl font-extrabold leading-none text-slate-900 tabular-nums sm:text-3xl">
+          <p className="font-display text-2xl font-extrabold leading-none text-slate-100 tabular-nums sm:text-3xl">
             {value}
-            <span className="ml-0.5 text-sm font-bold text-slate-300">/100</span>
+            <span className="ml-0.5 text-sm font-bold text-slate-600">/100</span>
           </p>
-          <p className="text-pretty mt-1.5 text-[11px] leading-snug text-slate-500 sm:text-xs">
+          <p className="text-pretty mt-1.5 text-[11px] leading-snug text-slate-400 sm:text-xs">
             {scan.caption}
           </p>
         </div>
       </div>
 
-      <ul className="relative flex flex-col gap-1.5 border-t border-slate-100 pt-3">
+      <ul className="relative flex flex-col gap-1.5 border-t border-white/5 pt-3">
         {scan.chips.map((chip) => (
           <li
             key={chip}
-            className="flex items-center gap-2 text-[11px] font-medium text-slate-500 sm:text-xs"
+            className="flex items-center gap-2 text-[11px] font-medium text-slate-400 sm:text-xs"
           >
-            <span className="grid size-4 place-items-center rounded-full bg-emerald-50 text-emerald-600">
+            <span className="grid size-4 place-items-center rounded-full bg-emerald-500/10 text-emerald-400">
               <Check className="size-2.5" strokeWidth={3.5} />
             </span>
             {chip}
@@ -234,15 +232,15 @@ function ScoreCard({
 
 function TerminalPanel({ scan, runKey }: { scan: Scan; runKey: number }) {
   return (
-    <div className="flex flex-col overflow-hidden rounded-2xl border border-slate-800/80 bg-slate-950 shadow-lift">
-      <div className="flex items-center gap-2 border-b border-white/10 bg-slate-900/70 px-4 py-3">
+    <div className="flex flex-col overflow-hidden rounded-2xl border border-white/10 bg-slate-950 shadow-lift">
+      <div className="flex items-center gap-2 border-b border-white/10 bg-white/[0.03] px-4 py-3">
         <span className="flex items-center gap-1.5">
           <span className="size-2.5 rounded-full bg-red-400/80" />
           <span className="size-2.5 rounded-full bg-amber-400/80" />
           <span className="size-2.5 rounded-full bg-emerald-400/80" />
         </span>
-        <span className="truncate pl-2 font-mono text-[11px] text-slate-400">
-          ~/my-ai-saas — ai-guard scan
+        <span className="truncate pl-2 font-mono text-[11px] text-slate-500">
+          ~/my-ai-saas — jailbreakr scan
         </span>
       </div>
 
@@ -270,7 +268,6 @@ function TerminalPanel({ scan, runKey }: { scan: Scan; runKey: number }) {
                   "flex gap-2",
                   line.kind === "cmd" && "text-slate-100",
                   line.kind === "ok" && "text-emerald-400",
-                  line.kind === "warn" && "text-amber-400",
                   line.kind === "out" && "text-slate-400",
                 )}
               >
@@ -279,7 +276,7 @@ function TerminalPanel({ scan, runKey }: { scan: Scan; runKey: number }) {
                 ) : null}
                 <span className="min-w-0 break-words">{line.text}</span>
                 {index === scan.lines.length - 1 ? (
-                  <span className="caret inline-block h-3.5 w-[7px] shrink-0 translate-y-[3px] bg-blue-400" />
+                  <span className="caret inline-block h-3.5 w-[7px] shrink-0 translate-y-[3px] bg-indigo-400" />
                 ) : null}
               </motion.p>
             ))}
@@ -294,7 +291,7 @@ export function ScorePreview() {
   const [active, setActive] = useState<ScanId>("security");
   const [runKey, setRunKey] = useState(0);
   const inViewRef = useRef<HTMLDivElement>(null);
-  const inView = useInView(inViewRef, { once: true, amount: 0.25 });
+  useInView(inViewRef, { once: true, amount: 0.25 });
 
   const scan = SCANS[active];
 
@@ -302,34 +299,34 @@ export function ScorePreview() {
     <section
       id="preview"
       ref={inViewRef}
-      className="relative scroll-mt-24 border-y border-slate-100 bg-slate-50/70 py-20 lg:py-24"
+      className="relative scroll-mt-24 border-y border-white/5 bg-card/40 py-20 lg:py-24"
     >
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 -z-10 bg-dot-soft mask-fade-radial opacity-60"
+        className="pointer-events-none absolute inset-0 -z-10 bg-dot-soft mask-fade-radial opacity-50"
       />
       <div className="mx-auto w-full max-w-6xl px-4 sm:px-6">
         <div className="mx-auto max-w-2xl text-center">
-          <span className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-600 shadow-soft">
-            <span className="size-1.5 rounded-full bg-emerald-500" />
+          <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-xs font-semibold text-slate-300 shadow-soft">
+            <span className="size-1.5 rounded-full bg-emerald-400" />
             Live scan preview
           </span>
-          <h2 className="mt-5 text-balance text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">
+          <h2 className="mt-5 text-balance text-3xl font-extrabold tracking-tight text-slate-100 sm:text-4xl">
             Two scores. One command. Zero guesswork.
           </h2>
-          <p className="text-pretty mt-4 text-base leading-relaxed text-slate-500">
+          <p className="text-pretty mt-4 text-base leading-relaxed text-slate-400">
             Every scan returns a security grade and a legal exposure grade, so
-            you know exactly what is safe to ship and what a regulator would
+            you know exactly what is safe to ship — and what a regulator would
             flag first.
           </p>
         </div>
 
-        <div className="mt-12 overflow-hidden rounded-[22px] border border-slate-200 bg-white p-3 shadow-lift sm:p-4 lg:p-5">
+        <div className="mt-12 overflow-hidden rounded-[22px] border border-white/10 bg-card p-3 shadow-lift sm:p-4 lg:p-5">
           <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div
               role="tablist"
               aria-label="Scan type"
-              className="inline-flex w-full gap-1 rounded-xl bg-slate-100 p-1 sm:w-auto"
+              className="inline-flex w-full gap-1 rounded-xl bg-white/[0.05] p-1 sm:w-auto"
             >
               {(Object.keys(SCANS) as ScanId[]).map((id) => {
                 const item = SCANS[id];
@@ -344,14 +341,14 @@ export function ScorePreview() {
                     className={cn(
                       "relative flex-1 rounded-lg px-3.5 py-2 text-xs font-semibold transition-colors duration-200 sm:flex-none sm:px-4 sm:text-sm",
                       isActive
-                        ? "text-slate-900"
-                        : "text-slate-500 hover:text-slate-700",
+                        ? "text-slate-100"
+                        : "text-slate-500 hover:text-slate-300",
                     )}
                   >
                     {isActive ? (
                       <motion.span
                         layoutId="scan-tab"
-                        className="absolute inset-0 rounded-lg bg-white shadow-sm"
+                        className="absolute inset-0 rounded-lg bg-indigo-500/20 ring-1 ring-indigo-400/30"
                         transition={{ type: "spring", stiffness: 340, damping: 32 }}
                       />
                     ) : null}
@@ -364,7 +361,7 @@ export function ScorePreview() {
             <button
               type="button"
               onClick={() => setRunKey((key) => key + 1)}
-              className="inline-flex w-fit items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-600 shadow-xs transition-colors duration-200 hover:border-slate-300 hover:text-slate-900"
+              className="inline-flex w-fit items-center gap-2 rounded-lg border border-white/10 bg-white/[0.04] px-3 py-2 text-xs font-semibold text-slate-300 shadow-xs transition-colors duration-200 hover:border-white/20 hover:text-slate-100"
             >
               <RefreshCw className="size-3.5" />
               Re-run scan
@@ -396,7 +393,7 @@ export function ScorePreview() {
               className="mt-4 text-center text-xs text-slate-500"
             >
               Scan completed in 6.4s · 148 files · 0 critical issues ·{" "}
-              <span className="font-semibold text-slate-700">
+              <span className="font-semibold text-slate-300">
                 runs entirely on your machine
               </span>
             </motion.p>

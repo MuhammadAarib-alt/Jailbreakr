@@ -1,51 +1,105 @@
-// TODO: REPLACE THIS LANDING PAGE WITH AN ELEGANT, THEMATIC, AND WELL-DESIGNED LANDING PAGE RELEVANT TO THE PROJECT
-import { motion } from "framer-motion";
-import { Loader } from "lucide-react";
-import logo from "@/assets/logo.svg";
+import { AnimatePresence, motion } from "framer-motion";
+import { useCallback, useRef, useState } from "react";
+import type { FormEvent } from "react";
+
+import { FinalCta } from "@/components/landing/FinalCta";
+import { Hero } from "@/components/landing/Hero";
+import { HowItWorks, Features } from "@/components/landing/Sections";
+import { ScorePreview } from "@/components/landing/ScorePreview";
+import { SiteFooter } from "@/components/landing/SiteFooter";
+import { SiteHeader } from "@/components/landing/SiteHeader";
+import {
+  WaitlistSuccessDialog,
+} from "@/components/landing/WaitlistSuccessDialog";
+import { isValidEmail } from "@/components/landing/WaitlistForm";
 
 export default function Landing() {
+  const [email, setEmail] = useState("");
+  const [status, setStatus] = useState<"idle" | "loading">("idle");
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<{ email: string; position: number } | null>(
+    null,
+  );
+  const positionRef = useRef(1284);
+
+  const handleSubmit = useCallback(
+    (event: FormEvent<HTMLFormElement>) => {
+      event.preventDefault();
+      if (status === "loading") return;
+
+      const value = email.trim();
+      if (!value) {
+        setError("Please enter your developer email to join the waitlist.");
+        return;
+      }
+      if (!isValidEmail(value)) {
+        setError("That doesn't look like a valid email address — try again?");
+        return;
+      }
+
+      setError(null);
+      setStatus("loading");
+
+      window.setTimeout(() => {
+        positionRef.current += 1;
+        setSuccess({ email: value, position: positionRef.current });
+        setEmail("");
+        setStatus("idle");
+      }, 900);
+    },
+    [email, status],
+  );
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
-      className="min-h-screen flex flex-col"
+      className="flex min-h-screen flex-col bg-[#070b14]"
     >
+      <SiteHeader />
 
-      
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col items-center justify-center">
-        <div className="max-w-5xl mx-auto relative px-4">
-        {/* TODO: landing page goes here; replace with the landing page */}
-        <div className="flex justify-center">
-          <img
-            src={logo}
-            alt="Lock Icon"
-            width={64}
-            height={64}
-            className="rounded-lg mb-8 mt-24"
+      <main className="flex-1">
+        <Hero
+          email={email}
+          onEmailChange={(value) => {
+            setEmail(value);
+            if (error) setError(null);
+          }}
+          onSubmit={handleSubmit}
+          error={error}
+          status={status}
+        />
+        <ScorePreview />
+        <Features />
+        <HowItWorks />
+        <FinalCta
+          email={email}
+          onEmailChange={(value) => {
+            setEmail(value);
+            if (error) setError(null);
+          }}
+          onSubmit={handleSubmit}
+          error={error}
+          status={status}
+        />
+      </main>
+
+      <SiteFooter />
+
+      <AnimatePresence>
+        {success ? (
+          <WaitlistSuccessDialog
+            key={success.email + success.position}
+            open={Boolean(success)}
+            onOpenChange={(open) => {
+              if (!open) setSuccess(null);
+            }}
+            email={success.email}
+            position={success.position}
           />
-        </div>
-        <div className="flex items-center justify-center text-foreground">
-          <Loader className="h-8 w-8 animate-spin mr-4 shrink-0" />
-          <span className="text-base">
-            <a
-              href="https://freebuff.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-primary underline hover:text-primary/80 transition-colors font-medium"
-            >
-              freebuff.com
-            </a>
-            {" "}is generating your project...
-          </span>
-        </div>
-        <p className="text-center text-muted-foreground py-6 text-sm mt-2">
-          Check progress on your project page.
-        </p>
-        
-        </div>
-      </div>
+        ) : null}
+      </AnimatePresence>
     </motion.div>
   );
 }

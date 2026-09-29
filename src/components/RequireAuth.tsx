@@ -56,12 +56,12 @@ export function RequireAuth({
     }
 
     return (
-      <main className="flex min-h-screen items-center justify-center bg-background p-6">
-        <Card className="w-full max-w-md">
+      <main className="flex min-h-screen items-center justify-center bg-[#070b14] p-6">
+        <Card className="w-full max-w-md border-white/10 bg-card">
           <CardHeader className="text-center">
             <div className="flex justify-center">
-              <div className="mb-4 flex size-12 items-center justify-center rounded-full bg-muted">
-                <Lock className="size-5 text-muted-foreground" />
+              <div className="mb-4 flex size-12 items-center justify-center rounded-full bg-indigo-500/10 ring-1 ring-indigo-500/25">
+                <Lock className="size-5 text-indigo-300" />
               </div>
             </div>
             <CardTitle className="text-xl">{title}</CardTitle>
@@ -71,12 +71,15 @@ export function RequireAuth({
             You'll come straight back to this page once you're signed in.
           </CardContent>
           <CardFooter className="flex flex-col gap-2">
-            <Button className="w-full" onClick={() => navigate(signInHref)}>
+            <Button
+              className="h-11 w-full rounded-xl bg-gradient-to-b from-indigo-400 to-indigo-600 text-white shadow-[0_10px_30px_-12px_rgba(99,102,241,0.9)] hover:from-indigo-300 hover:to-indigo-500"
+              onClick={() => navigate(signInHref)}
+            >
               Sign in
             </Button>
             <Button
               variant="ghost"
-              className="w-full"
+              className="w-full text-slate-400 hover:bg-white/5 hover:text-slate-100"
               onClick={() => navigate("/")}
             >
               Back to home

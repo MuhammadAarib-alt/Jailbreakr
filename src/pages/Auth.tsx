@@ -1,12 +1,4 @@
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import {
   InputOTP,
@@ -15,10 +7,19 @@ import {
 } from "@/components/ui/input-otp";
 
 import { useAuth } from "@/hooks/use-auth";
-import logo from "@/assets/logo.svg";
-import { ArrowRight, Loader2, Mail, UserX } from "lucide-react";
+import { BrandMark } from "@/components/landing/Brand";
+import { EASE } from "@/components/landing/motion";
+import { motion } from "framer-motion";
+import {
+  ArrowLeft,
+  ArrowRight,
+  Loader2,
+  Mail,
+  ShieldCheck,
+  UserX,
+} from "lucide-react";
 import { Suspense, useEffect, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router";
+import { Link, useNavigate, useSearchParams } from "react-router";
 
 interface AuthProps {
   redirectAfterAuth?: string;
@@ -52,6 +53,7 @@ function Auth({ redirectAfterAuth }: AuthProps = {}) {
       navigate(redirect);
     }
   }, [authLoading, isAuthenticated, navigate, redirect]);
+
   const handleEmailSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setIsLoading(true);
@@ -61,11 +63,11 @@ function Auth({ redirectAfterAuth }: AuthProps = {}) {
       await signIn("email-otp", formData);
       setStep({ email: formData.get("email") as string });
       setIsLoading(false);
-    } catch (error) {
-      console.error("Email sign-in error:", error);
+    } catch (err) {
+      console.error("Email sign-in error:", err);
       setError(
-        error instanceof Error
-          ? error.message
+        err instanceof Error
+          ? err.message
           : "Failed to send verification code. Please try again.",
       );
       setIsLoading(false);
@@ -79,16 +81,11 @@ function Auth({ redirectAfterAuth }: AuthProps = {}) {
     try {
       const formData = new FormData(event.currentTarget);
       await signIn("email-otp", formData);
-
-      console.log("signed in");
-
       navigate(redirect);
-    } catch (error) {
-      console.error("OTP verification error:", error);
-
+    } catch (err) {
+      console.error("OTP verification error:", err);
       setError("The verification code you entered is incorrect.");
       setIsLoading(false);
-
       setOtp("");
     }
   };
@@ -97,112 +94,141 @@ function Auth({ redirectAfterAuth }: AuthProps = {}) {
     setIsLoading(true);
     setError(null);
     try {
-      console.log("Attempting anonymous sign in...");
       await signIn("anonymous");
-      console.log("Anonymous sign in successful");
       navigate(redirect);
-    } catch (error) {
-      console.error("Guest login error:", error);
-      console.error("Error details:", JSON.stringify(error, null, 2));
-      setError(`Failed to sign in as guest: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    } catch (err) {
+      console.error("Guest login error:", err);
+      setError(
+        `Failed to sign in as guest: ${
+          err instanceof Error ? err.message : "Unknown error"
+        }`,
+      );
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="relative flex min-h-screen flex-col bg-[#070b14]">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 bg-grid-soft mask-fade-b opacity-40"
+      />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute left-1/2 top-[-14rem] -z-0 h-[30rem] w-[52rem] max-w-[130vw] -translate-x-1/2 rounded-full bg-[radial-gradient(ellipse_at_center,rgba(99,102,241,0.2),rgba(99,102,241,0)_62%)] blur-2xl"
+      />
 
-      
-      {/* Auth Content */}
-      <div className="flex-1 flex items-center justify-center">
-        <div className="flex items-center justify-center h-full flex-col">
-        <Card className="min-w-[350px] pb-0 border shadow-md">
-          {step === "signIn" ? (
-            <>
-              <CardHeader className="text-center">
-              <div className="flex justify-center">
-                    <img
-                      src={logo}
-                      alt="Lock Icon"
-                      width={64}
-                      height={64}
-                      className="rounded-lg mb-4 mt-4 cursor-pointer"
-                      onClick={() => navigate("/")}
-                    />
-                  </div>
-                <CardTitle className="text-xl">Get Started</CardTitle>
-                <CardDescription>
-                  Enter your email to log in or sign up
-                </CardDescription>
-              </CardHeader>
-              <form onSubmit={handleEmailSubmit}>
-                <CardContent>
-                  
+      <div className="relative flex flex-1 items-center justify-center px-4 py-12">
+        <motion.div
+          initial={{ opacity: 0, y: 18, scale: 0.98 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ duration: 0.6, ease: EASE }}
+          className="w-full max-w-md"
+        >
+          <Link
+            to="/"
+            className="mb-8 inline-flex items-center gap-2 text-sm font-medium text-slate-400 transition-colors hover:text-slate-100"
+          >
+            <ArrowLeft className="size-4" />
+            Back to Jailbreakr
+          </Link>
+
+          <div className="overflow-hidden rounded-2xl border border-white/10 bg-card shadow-lift">
+            {step === "signIn" ? (
+              <div className="p-6 sm:p-8">
+                <div className="flex items-center gap-3">
+                  <BrandMark />
+                  <span className="font-display text-[15px] font-extrabold tracking-tight text-slate-100">
+                    Jailbreakr
+                  </span>
+                </div>
+
+                <h1 className="mt-6 font-display text-2xl font-extrabold tracking-tight text-slate-100">
+                  Get started
+                </h1>
+                <p className="mt-1.5 text-sm text-slate-400">
+                  Enter your email to log in or create your account — your scan
+                  history and scores stay with it.
+                </p>
+
+                <form onSubmit={handleEmailSubmit} className="mt-6">
                   <div className="relative flex items-center gap-2">
                     <div className="relative flex-1">
-                      <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                      <Mail className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-slate-500" />
                       <Input
                         name="email"
                         placeholder="name@example.com"
                         type="email"
-                        className="pl-9"
+                        autoComplete="email"
+                        className="h-11 border-white/10 bg-white/[0.03] pl-9 text-slate-100 placeholder:text-slate-500 focus-visible:border-indigo-400 focus-visible:ring-indigo-500/25"
                         disabled={isLoading}
                         required
                       />
                     </div>
-                    <Button
+                    <motion.button
                       type="submit"
-                      variant="outline"
-                      size="icon"
+                      whileHover={{ y: -2 }}
+                      whileTap={{ scale: 0.96 }}
+                      transition={{ type: "spring", stiffness: 420, damping: 26 }}
+                      className="grid size-11 shrink-0 place-items-center rounded-xl bg-gradient-to-b from-indigo-400 to-indigo-600 text-white shadow-[0_10px_30px_-12px_rgba(99,102,241,0.9)] transition-colors hover:from-indigo-300 hover:to-indigo-500"
                       disabled={isLoading}
                     >
                       {isLoading ? (
-                        <Loader2 className="h-4 w-4 animate-spin" />
+                        <Loader2 className="size-4 animate-spin" />
                       ) : (
-                        <ArrowRight className="h-4 w-4" />
+                        <ArrowRight className="size-4" />
                       )}
-                    </Button>
+                    </motion.button>
                   </div>
-                  {error && (
-                    <p className="mt-2 text-sm text-red-500">{error}</p>
-                  )}
-                  
-                  <div className="mt-4">
+
+                  {error ? (
+                    <p className="mt-3 text-sm text-rose-400">{error}</p>
+                  ) : null}
+
+                  <div className="mt-6">
                     <div className="relative">
                       <div className="absolute inset-0 flex items-center">
-                        <span className="w-full border-t" />
+                        <span className="w-full border-t border-white/10" />
                       </div>
-                      <div className="relative flex justify-center text-xs uppercase">
-                        <span className="bg-background px-2 text-muted-foreground">
-                          Or
-                        </span>
+                      <div className="relative flex justify-center text-[11px] font-semibold uppercase tracking-[0.14em]">
+                        <span className="bg-card px-2 text-slate-500">or</span>
                       </div>
                     </div>
-                    
+
                     <Button
                       type="button"
                       variant="outline"
-                      className="w-full mt-4"
+                      className="mt-4 h-11 w-full border-white/10 bg-white/[0.03] text-slate-200 hover:bg-white/10 hover:text-white"
                       onClick={handleGuestLogin}
                       disabled={isLoading}
                     >
-                      <UserX className="mr-2 h-4 w-4" />
-                      Continue as Guest
+                      <UserX className="mr-2 size-4" />
+                      Continue as guest
                     </Button>
                   </div>
-                </CardContent>
-              </form>
-            </>
-          ) : (
-            <>
-              <CardHeader className="text-center mt-4">
-                <CardTitle>Check your email</CardTitle>
-                <CardDescription>
-                  We've sent a code to {step.email}
-                </CardDescription>
-              </CardHeader>
-              <form onSubmit={handleOtpSubmit}>
-                <CardContent className="pb-4">
+                </form>
+              </div>
+            ) : (
+              <div className="p-6 sm:p-8">
+                <div className="flex items-center gap-3">
+                  <BrandMark />
+                  <span className="font-display text-[15px] font-extrabold tracking-tight text-slate-100">
+                    Jailbreakr
+                  </span>
+                </div>
+
+                <h1 className="mt-6 font-display text-2xl font-extrabold tracking-tight text-slate-100">
+                  Check your email
+                </h1>
+                <p className="mt-1.5 text-sm text-slate-400">
+                  We sent a 6-digit code to{" "}
+                  <span className="font-semibold text-slate-200">
+                    {step.email}
+                  </span>
+                  .
+                </p>
+
+                <form onSubmit={handleOtpSubmit} className="mt-6">
                   <input type="hidden" name="email" value={step.email} />
                   <input type="hidden" name="code" value={otp} />
 
@@ -213,12 +239,13 @@ function Auth({ redirectAfterAuth }: AuthProps = {}) {
                       maxLength={6}
                       disabled={isLoading}
                       onKeyDown={(e) => {
-                        if (e.key === "Enter" && otp.length === 6 && !isLoading) {
-                          // Find the closest form and submit it
+                        if (
+                          e.key === "Enter" &&
+                          otp.length === 6 &&
+                          !isLoading
+                        ) {
                           const form = (e.target as HTMLElement).closest("form");
-                          if (form) {
-                            form.requestSubmit();
-                          }
+                          if (form) form.requestSubmit();
                         }
                       }}
                     >
@@ -229,67 +256,59 @@ function Auth({ redirectAfterAuth }: AuthProps = {}) {
                       </InputOTPGroup>
                     </InputOTP>
                   </div>
-                  {error && (
-                    <p className="mt-2 text-sm text-red-500 text-center">
+
+                  {error ? (
+                    <p className="mt-3 text-center text-sm text-rose-400">
                       {error}
                     </p>
-                  )}
-                  <p className="text-sm text-muted-foreground text-center mt-4">
-                    Didn't receive a code?{" "}
-                    <Button
-                      variant="link"
-                      className="p-0 h-auto"
-                      onClick={() => setStep("signIn")}
-                    >
-                      Try again
-                    </Button>
-                  </p>
-                </CardContent>
-                <CardFooter className="flex-col gap-2">
+                  ) : null}
+
                   <Button
                     type="submit"
-                    className="w-full"
+                    className="mt-6 h-11 w-full rounded-xl bg-gradient-to-b from-indigo-400 to-indigo-600 text-white shadow-[0_10px_30px_-12px_rgba(99,102,241,0.9)] hover:from-indigo-300 hover:to-indigo-500"
                     disabled={isLoading || otp.length !== 6}
                   >
                     {isLoading ? (
                       <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Verifying...
+                        <Loader2 className="mr-2 size-4 animate-spin" />
+                        Verifying…
                       </>
                     ) : (
                       <>
                         Verify code
-                        <ArrowRight className="ml-2 h-4 w-4" />
+                        <ArrowRight className="ml-2 size-4" />
                       </>
                     )}
                   </Button>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    onClick={() => setStep("signIn")}
-                    disabled={isLoading}
-                    className="w-full"
-                  >
-                    Use different email
-                  </Button>
-                </CardFooter>
-              </form>
-            </>
-          )}
 
-          <div className="py-4 px-6 text-xs text-center text-muted-foreground bg-muted border-t rounded-b-lg">
-            Secured by{" "}
-            <a
-              href="https://freebuff.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="underline hover:text-primary transition-colors"
-            >
-              freebuff.com
-            </a>
+                  <div className="mt-3 flex items-center justify-between text-sm">
+                    <button
+                      type="button"
+                      onClick={() => setStep("signIn")}
+                      className="text-slate-400 transition-colors hover:text-slate-200"
+                      disabled={isLoading}
+                    >
+                      Use a different email
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setOtp("")}
+                      className="font-medium text-indigo-300 transition-colors hover:text-indigo-200"
+                      disabled={isLoading}
+                    >
+                      Resend code
+                    </button>
+                  </div>
+                </form>
+              </div>
+            )}
+
+            <div className="flex items-center justify-center gap-1.5 border-t border-white/10 bg-white/[0.02] px-6 py-4 text-xs text-slate-500">
+              <ShieldCheck className="size-3.5 text-emerald-400" />
+              Passwordless &amp; secured by one-time codes
+            </div>
           </div>
-        </Card>
-        </div>
+        </motion.div>
       </div>
     </div>
   );
@@ -297,7 +316,7 @@ function Auth({ redirectAfterAuth }: AuthProps = {}) {
 
 export default function AuthPage(props: AuthProps) {
   return (
-    <Suspense>
+    <Suspense fallback={null}>
       <Auth {...props} />
     </Suspense>
   );
