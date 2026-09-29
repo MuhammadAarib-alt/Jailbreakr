@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { FileWarning, ShieldOff, Wand2 } from "lucide-react";
+import { FileWarning, ShieldOff, Wand2, Zap } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { EASE, fadeUp, staggerParent } from "./motion";
@@ -110,7 +110,14 @@ export function Features() {
   );
 }
 
-const STEPS = [
+const STEPS: {
+  number: string;
+  title: string;
+  body: string;
+  code: string | null;
+  pro?: boolean;
+  codeNote?: string;
+}[] = [
   {
     number: "01",
     title: "Install the CLI",
@@ -126,8 +133,10 @@ const STEPS = [
   {
     number: "03",
     title: "Auto-patch before launch",
+    pro: true,
     body: "Pro users apply suggested fixes with a single command and ship knowing both scores are green.",
     code: "npx jailbreakr fix --apply",
+    codeNote: "(Requires Pro Key)",
   },
 ];
 
@@ -184,15 +193,26 @@ export function HowItWorks() {
               <span className="font-display text-sm font-extrabold tracking-[0.2em] text-indigo-400">
                 {step.number}
               </span>
-              <h3 className="mt-3 text-lg font-bold tracking-tight text-slate-100">
-                {step.title}
-              </h3>
+              <div className="mt-3 flex flex-wrap items-center gap-2">
+                <h3 className="text-lg font-bold tracking-tight text-slate-100">
+                  {step.title}
+                </h3>
+                {step.pro ? (
+                  <span className="inline-flex items-center gap-1 rounded-full bg-indigo-500/15 px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.08em] text-indigo-300 ring-1 ring-indigo-500/30">
+                    <Zap className="size-3" />
+                    Pro Feature
+                  </span>
+                ) : null}
+              </div>
               <p className="text-pretty mt-2 text-sm leading-relaxed text-slate-400">
                 {step.body}
               </p>
               {step.code ? (
-                <code className="mt-4 block truncate rounded-lg border border-white/10 bg-slate-950 px-3 py-2 font-mono text-xs text-emerald-300">
+                <code className="mt-4 block whitespace-normal break-words rounded-lg border border-white/10 bg-slate-950 px-3 py-2 font-mono text-xs leading-relaxed text-emerald-300">
                   {step.code}
+                  {step.codeNote ? (
+                    <span className="text-slate-500"> {step.codeNote}</span>
+                  ) : null}
                 </code>
               ) : null}
             </motion.li>
