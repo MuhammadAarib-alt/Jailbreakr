@@ -24,10 +24,11 @@ Vercel clones a **clean** copy of your repo and runs `npm run build`
 
 - `.gitignore` no longer ignores `src/convex/_generated/`, and the
   generated files are committed.
-- `vercel.json` pins Node 22, keeps `npm run build` as the build command,
-  sets `dist` as the output directory, and adds SPA rewrites so
-  `/auth`, `/dashboard`, etc. load correctly on refresh (plus
-  immutable caching for hashed `/assets/*`).
+- `vercel.json` keeps `npm run build` as the build command, sets `dist` as the
+  output directory, and adds SPA rewrites so `/auth`, `/dashboard`, etc. load
+  correctly on refresh (plus immutable caching for hashed `/assets/*`).
+  (Node 24.x was set in project settings; `engines.node >= 22` in
+  `package.json` also pins the CLI runtime.)
 - `package.json` gained an `engines.node >= 22` hint (Vite 7 requires
   Node 20.19+ / 22.12+).
 

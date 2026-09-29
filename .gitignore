@@ -5,3 +5,6 @@ dist
 # typechecks it, and it cannot be regenerated on Vercel (codegen needs a
 # Convex deployment token). Regenerate manually with `bun convex dev --once`.
 # src/convex/_generated
+.vercel
+.env*
+!.env.example
