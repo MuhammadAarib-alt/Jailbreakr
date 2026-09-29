@@ -88,7 +88,7 @@ export function Hero({
             }}
             className="mt-7 text-balance text-[2.1rem] font-extrabold leading-[1.08] tracking-tight text-slate-100 sm:text-5xl lg:text-[3.6rem]"
           >
-            Start Your Profitable AI SaaS Today —{" "}
+            Ship Safe AI SaaS Today —{" "}
             <span className="relative mx-1 inline-block">
               <span className="relative z-10 bg-gradient-to-r from-indigo-300 via-indigo-400 to-emerald-400 bg-clip-text text-transparent">
                 Without Getting Hacked or Sued.
