@@ -1,6 +1,7 @@
 import { motion, useMotionValueEvent, useScroll } from "framer-motion";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, LogIn } from "lucide-react";
 import { useState } from "react";
+import { Link } from "react-router";
 
 import { BrandLockup } from "./Brand";
 
@@ -28,15 +29,15 @@ export function SiteHeader() {
       <div
         className={`absolute inset-0 -z-10 transition-all duration-300 ${
           scrolled
-            ? "border-slate-200/80 bg-white/80 backdrop-blur-xl"
-            : "border-transparent bg-white/0"
+            ? "border-white/10 bg-[#070b14]/85 backdrop-blur-xl"
+            : "border-transparent bg-transparent"
         }`}
       />
       <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between gap-4 px-4 sm:px-6 lg:h-[72px]">
         <a
           href="#top"
-          className="rounded-lg outline-none focus-visible:ring-[3px] focus-visible:ring-blue-500/25"
-          aria-label="TestMySaaS home"
+          className="rounded-lg outline-none focus-visible:ring-[3px] focus-visible:ring-indigo-500/30"
+          aria-label="Jailbreakr home"
         >
           <BrandLockup />
         </a>
@@ -46,23 +47,32 @@ export function SiteHeader() {
             <a
               key={link.href}
               href={link.href}
-              className="rounded-lg px-3 py-2 text-sm font-medium text-slate-500 transition-colors duration-200 hover:bg-slate-100/80 hover:text-slate-900"
+              className="rounded-lg px-3 py-2 text-sm font-medium text-slate-400 transition-colors duration-200 hover:bg-white/5 hover:text-slate-100"
             >
               {link.label}
             </a>
           ))}
         </nav>
 
-        <motion.a
-          href="#waitlist"
-          whileHover={{ y: -2 }}
-          whileTap={{ scale: 0.97 }}
-          transition={{ type: "spring", stiffness: 420, damping: 26 }}
-          className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-slate-900 px-3.5 text-sm font-semibold text-white shadow-sm outline-none transition-colors duration-200 hover:bg-blue-600 focus-visible:ring-[3px] focus-visible:ring-blue-500/30 sm:px-4"
-        >
-          Join Waitlist
-          <ArrowUpRight className="size-4" />
-        </motion.a>
+        <div className="flex items-center gap-2">
+          <Link
+            to="/auth"
+            className="hidden items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium text-slate-300 transition-colors duration-200 hover:bg-white/5 hover:text-white sm:inline-flex"
+          >
+            <LogIn className="size-4" />
+            Sign in
+          </Link>
+          <motion.a
+            href="#waitlist"
+            whileHover={{ y: -2 }}
+            whileTap={{ scale: 0.97 }}
+            transition={{ type: "spring", stiffness: 420, damping: 26 }}
+            className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-indigo-500 px-3.5 text-sm font-semibold text-white shadow-[0_10px_28px_-14px_rgba(99,102,241,1)] outline-none transition-colors duration-200 hover:bg-indigo-400 focus-visible:ring-[3px] focus-visible:ring-indigo-400/40 sm:px-4"
+          >
+            Join Waitlist
+            <ArrowUpRight className="size-4" />
+          </motion.a>
+        </div>
       </div>
     </motion.header>
   );

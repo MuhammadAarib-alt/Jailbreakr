@@ -4,7 +4,7 @@ import type { FormEvent } from "react";
 
 import { cn } from "@/lib/utils";
 
-export const INSTALL_COMMAND = "npx ai-guard-cli scan";
+export const INSTALL_COMMAND = "npx jailbreakr scan";
 
 export function isValidEmail(value: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(value.trim());
@@ -16,7 +16,7 @@ type WaitlistFormProps = {
   onSubmit: (event: FormEvent<HTMLFormElement>) => void;
   error?: string | null;
   status?: "idle" | "loading";
-  tone?: "light" | "dark";
+  tone?: "dark" | "glass";
   ctaLabel?: string;
   className?: string;
   inputId?: string;
@@ -28,12 +28,12 @@ export function WaitlistForm({
   onSubmit,
   error,
   status = "idle",
-  tone = "light",
+  tone = "dark",
   ctaLabel = "Get Free Terminal Access",
   className,
   inputId = "waitlist-email",
 }: WaitlistFormProps) {
-  const isDark = tone === "dark";
+  const isGlass = tone === "glass";
   const busy = status === "loading";
 
   return (
@@ -59,13 +59,13 @@ export function WaitlistForm({
             aria-invalid={Boolean(error)}
             aria-describedby={error ? `${inputId}-error` : undefined}
             className={cn(
-              "h-12 w-full rounded-xl border bg-white px-4 text-base shadow-xs outline-none transition-all duration-200 placeholder:text-slate-400 sm:text-sm",
-              "focus-visible:ring-[3px] focus-visible:ring-blue-500/20",
+              "h-12 w-full rounded-xl border bg-card px-4 text-base text-slate-100 shadow-xs outline-none transition-all duration-200 placeholder:text-slate-500 sm:text-sm",
+              "focus-visible:ring-[3px] focus-visible:ring-indigo-500/25",
               error
-                ? "border-red-300 focus-visible:border-red-400"
-                : "border-slate-200 hover:border-slate-300 focus-visible:border-blue-500",
-              isDark &&
-                "border-white/15 bg-white/10 text-white placeholder:text-slate-400 hover:border-white/25 focus-visible:border-blue-400",
+                ? "border-rose-500/60 focus-visible:border-rose-400"
+                : "border-white/10 hover:border-white/20 focus-visible:border-indigo-400",
+              isGlass &&
+                "border-white/15 bg-white/[0.04] backdrop-blur hover:border-white/25",
             )}
           />
         </div>
@@ -77,12 +77,11 @@ export function WaitlistForm({
           whileTap={{ scale: 0.98, y: 0 }}
           transition={{ type: "spring", stiffness: 420, damping: 26 }}
           className={cn(
-            "relative inline-flex h-12 shrink-0 items-center justify-center gap-2 overflow-hidden rounded-xl px-6 text-sm font-semibold text-white shadow-lg transition-[box-shadow,background-color] duration-200",
-            "focus-visible:ring-[3px] focus-visible:ring-blue-500/30 focus-visible:outline-none",
+            "group relative inline-flex h-12 shrink-0 items-center justify-center gap-2 overflow-hidden rounded-xl px-6 text-sm font-semibold text-white",
+            "bg-gradient-to-b from-indigo-400 to-indigo-600 shadow-[0_10px_30px_-12px_rgba(99,102,241,0.9)]",
+            "transition-[box-shadow,filter] duration-200 hover:from-indigo-300 hover:to-indigo-500 hover:shadow-[0_16px_40px_-12px_rgba(99,102,241,1)]",
+            "focus-visible:ring-[3px] focus-visible:ring-indigo-400/40 focus-visible:outline-none",
             "disabled:pointer-events-none disabled:opacity-70",
-            isDark
-              ? "bg-blue-500 shadow-blue-500/25 hover:bg-blue-400 hover:shadow-blue-400/35"
-              : "bg-blue-600 shadow-blue-600/25 hover:bg-blue-700 hover:shadow-blue-700/30",
           )}
         >
           <span
@@ -107,10 +106,7 @@ export function WaitlistForm({
             animate={{ opacity: 1, y: 0, height: "auto" }}
             exit={{ opacity: 0, y: -6, height: 0 }}
             transition={{ duration: 0.24, ease: [0.16, 1, 0.3, 1] }}
-            className={cn(
-              "pt-2 text-left text-xs font-medium",
-              isDark ? "text-red-300" : "text-red-600",
-            )}
+            className="pt-2 text-left text-xs font-medium text-rose-400"
           >
             {error}
           </motion.p>
