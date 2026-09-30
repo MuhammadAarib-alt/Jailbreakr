@@ -29,7 +29,7 @@ export function WaitlistForm({
   error,
   status = "idle",
   tone = "dark",
-  ctaLabel = "Get Free Terminal Access",
+  ctaLabel = "Join Waitlist for 50% Off",
   className,
   inputId = "waitlist-email",
 }: WaitlistFormProps) {

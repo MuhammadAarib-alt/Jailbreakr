@@ -112,7 +112,7 @@ export function WaitlistSuccessDialog({
                     Early perk
                   </p>
                   <p className="mt-1 font-display text-xl font-extrabold text-slate-100">
-                    Pro trial
+                    50% Off Pro
                   </p>
                 </div>
               </div>
@@ -128,7 +128,7 @@ export function WaitlistSuccessDialog({
                 className="mt-6 inline-flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-indigo-500 text-sm font-semibold text-white shadow-[0_10px_30px_-12px_rgba(99,102,241,0.9)] transition-all duration-200 hover:bg-indigo-400 focus-visible:ring-[3px] focus-visible:ring-indigo-400/40 focus-visible:outline-none"
               >
                 <Terminal className="size-4" />
-                Back to the terminal
+                Done
               </button>
             </div>
           </motion.div>

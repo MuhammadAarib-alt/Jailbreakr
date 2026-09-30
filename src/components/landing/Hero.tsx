@@ -6,8 +6,8 @@ import { INSTALL_COMMAND, WaitlistForm } from "./WaitlistForm";
 import { EASE, staggerParent } from "./motion";
 
 const TRUST = [
-  { icon: Zap, label: "100% Free Audit" },
-  { icon: Terminal, label: "Works via npx" },
+  { icon: Zap, label: "50% Off for Early Access" },
+  { icon: Terminal, label: "Terminal CLI Tool" },
   { icon: CreditCard, label: "No Credit Card Required" },
 ];
 
